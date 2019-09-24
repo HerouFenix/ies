@@ -52,3 +52,41 @@ Comandos relacionados com Branches:
 
 Nota: Eu fiz a tarefa 1 enquanto que o Vasco a 2
 
+Logger:
+    1. No pom.xml importar as dependencias:
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.12.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.12.1</version>
+        </dependency>
+    2. Criar ficheiro log4j2.xml no src/main/resources
+    3. Copiar (Ex. de configuraçao que escreve para a Consola e para um ficheiro chamado logger.log):
+        <Configuration status="info">
+            <Appenders>
+                <Console name="Console" target="SYSTEM_OUT">
+                    <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
+                </Console>
+                <File name="File" fileName="logger.log" append="true">
+                    <PatternLayout>
+                        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
+                    </PatternLayout>
+                </File>
+            </Appenders>
+            <Loggers>
+                <Root level="info">
+                    <AppenderRef ref="Console"/>
+                    <AppenderRef ref="File"/>
+                </Root>
+            </Loggers>
+        </Configuration>
+    4. Na Main.java colocar:
+        protected static final Logger logger = LogManager.getLogger();
+    5. Na Main.java importar:
+        import org.apache.logging.log4j.LogManager;
+        import org.apache.logging.log4j.Logger; 
+    

@@ -1,12 +1,15 @@
 package com.weatherradar;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class Main {
-     private static int CITY_ID_AVEIRO = 1010500;
+    private static int CITY_ID_AVEIRO = 1010500;
+    protected static final Logger logger = LogManager.getLogger();
 
     public static void main( String[] args )
     {
@@ -25,8 +28,8 @@ public class Main {
         try {
             Response<IpmaCityForecast> apiResponse = callSync.execute();
             IpmaCityForecast forecast = apiResponse.body();
-            System. out .println( "Max temp for today: " + forecast.getData().
-                    listIterator().next().getTMax());
+            logger.info("Max temp for today: " + forecast.getData().listIterator().next().getTMax() + "Cº");
+            //System.out.println( "Max temp for today: " + forecast.getData().listIterator().next().getTMax());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

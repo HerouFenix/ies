@@ -104,6 +104,10 @@ Novo Projeto (WeatherRadar):
         2. $mvn exec:java -Dexec.mainClass="com.weatherradar.Main"
 
 
+Importar Maven Project para IntelliJ:
+    https://www.lagomframework.com/documentation/1.5.x/java/IntellijMaven.html
+
+
 FINAL:
 
 "No ficheiro “readme” da aula, responder às questões: o que é um “maven goal”? quais os principais “maven goals” e a respetiva sequência de invocação? "
