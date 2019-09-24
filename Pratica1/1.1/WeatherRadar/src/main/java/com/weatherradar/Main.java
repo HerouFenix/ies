@@ -25,10 +25,11 @@ public class Main {
         try {
             Response<IpmaCityForecast> apiResponse = callSync.execute();
             IpmaCityForecast forecast = apiResponse.body();
-            System. out .println( "max temp for today: " + forecast.getData().
+            System. out .println( "Max temp for today: " + forecast.getData().
                     listIterator().next().getTMax());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        System.exit(1);
     }
 }
