@@ -82,3 +82,85 @@
 
 
     Nota: Para manter persistencia de dados (mesmo quando se apaga o Container) seria necessario criar um Volume e associa lo ao container. Porem isto e feito automaticamente quando criamos o container no Portainer. Quando tentamos remover o Container o portainer depois pergunta se queremos tambem remover o Volume ou mante-lo.. Nice
+
+
+
+Perguntas Finais:
+    $docker container ls --all
+        CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+        f7f821b6b685        postgres:latest     "docker-entrypoint.s…"   30 minutes ago      Up 8 minutes        5432/tcp            PostGresPratica1.3
+
+    Dockerfiles:
+        1. 
+            # Use an official Python runtime as a parent image
+            FROM python:2.7-slim
+
+            # Set the working directory to /app
+            WORKDIR /app
+
+            # Copy the current directory contents into the container at /app
+            COPY . /app
+
+            # Install any needed packages specified in requirements.txt
+            RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+            # Make port 80 available to the world outside this container
+            EXPOSE 80
+
+            # Define environment variable
+            ENV NAME World
+
+            # Run app.py when the container launches
+            CMD ["python", "app.py"]
+
+        2.
+            1 	55.3 MB 	
+            ADD file:e82c447c3eae5d1d0282d8557b0c271b29d1be0d0f23204a09ad468be7a80d8c in /
+            2 	0 B 	
+            CMD ["bash"]
+            3 	10.2 MB 	
+            RUN set -ex; if ! command -v gpg > /dev/null; then apt-get update; apt-get install -y --no-install-recommends gnupg ...
+            4 	328.6 kB 	
+            RUN set -eux; groupadd -r postgres --gid=999; useradd -r -g postgres --uid=999 --home-dir=/var/lib/postgresql --shell=/bin/ba...
+            5 	0 B 	
+            ENV GOSU_VERSION=1.11
+            6 	4 MB 	
+            RUN set -x && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/*...
+            7 	16.5 MB 	
+            RUN set -eux; if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; sed -ri...
+            8 	0 B 	
+            ENV LANG=en_US.utf8
+            9 	1.1 MB 	
+            RUN set -eux; apt-get update; apt-get install -y --no-install-recommends libnss-wrapper; rm -rf /var/lib/apt/lists/*
+            10 	0 B 	
+            RUN mkdir /docker-entrypoint-initdb.d
+            11 	4.6 kB 	
+            RUN set -ex; key='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8'; export GNUPGHOME="$(mktemp -d)"; gpg --batch --keyserver ha.poo...
+            12 	0 B 	
+            ENV PG_MAJOR=11
+            13 	0 B 	
+            ENV PG_VERSION=11.5-1.pgdg90+1
+            14 	224.9 MB 	
+            RUN set -ex; export PYTHONDONTWRITEBYTECODE=1; dpkgArch="$(dpkg --print-architecture)"; case "$dpkgArch" in amd64|i386|p...
+            15 	48.1 kB 	
+            RUN set -eux; dpkg-divert --add --rename --divert "/usr/share/postgresql/postgresql.conf.sample.dpkg" "/usr/share/postgresql/$...
+            16 	0 B 	
+            RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql && chmod 2777 /var/run/postgresql
+            17 	0 B 	
+            ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/11/bin
+            18 	0 B 	
+            ENV PGDATA=/var/lib/postgresql/data
+            19 	0 B 	
+            RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA"
+            20 	0 B 	
+            VOLUME [/var/lib/postgresql/data]
+            21 	5.5 kB 	
+            COPY file:821a5675752f9e8c7b4118e7184c6f65d810150cd254bac8cfda104cdb7f0298 in /usr/local/bin/
+            22 	34 B 	
+            RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
+            23 	0 B 	
+            ENTRYPOINT ["docker-entrypoint.sh"]
+            24 	0 B 	
+            EXPOSE 5432
+            25 	0 B 	
+            CMD ["postgres"] 
