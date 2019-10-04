@@ -1,4 +1,4 @@
-https://github.com/HerouFenix/PraticasIES
+https://github.com/HerouFenix/IES
 Nota: Este repo sera usado, tanto para este exercicio, como para todos os outros exercicios realizados nesta cadeira, para que possam estar organizados, documentados e partilhados com quem precisar.
 
 Nota: Este exercicio baseava-se na criação de novas features ao exercicio do WeatherRadar (Que se encontra no diretorio 1.1), pelo que os unicos conteudos nesta pasta serão apontamentos da resolução
