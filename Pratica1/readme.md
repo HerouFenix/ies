@@ -16,7 +16,7 @@ Exercícios:
         R: A sequencia de invocação é fixa e predeterminada para cada fase. Usando o comando $mvn help:describe -Dcmd=PHASENAME podemos listar todos os goals bound à fase especificada por PHASENAME
 
 
-1.2 (github: https://github.com/HerouFenix/PraticasIES)
+1.2 (github: https://github.com/HerouFenix/IES)
     * 46d4c32 (HEAD -> master, origin/master) Dockerfiles added
     * ed5b58d Pratica 1.3 readme
     * 29d5af8 Started Docker 1.3
