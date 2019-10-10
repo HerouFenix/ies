@@ -73,43 +73,6 @@ Connected to server
 08-Oct-2019 15:23:26.589 INFO [Catalina-utility-2] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/apache-tomcat9/webapps/manager] has finished in [48] ms
 ```
 
-#### h)
-Follow this tutorial https://medium.com/@backslash112/create-maven-project-with-servlet-in-intellij-idea-2018-be0d673bd9af to know how to setup the Servlet!
-And this one https://www.ntu.edu.sg/home/ehchua/programming/java/JavaServlets.html to know how to access the request
-
-A classe Servlet ficou assim:
-```
-package com.CustomMsg;  
-  
-import javax.servlet.ServletException;  
-import javax.servlet.annotation.WebServlet;  
-import javax.servlet.http.HttpServlet;  
-import javax.servlet.http.HttpServletRequest;  
-import javax.servlet.http.HttpServletResponse;  
-import java.io.IOException;  
-import java.io.PrintWriter;  
-  
-@WebServlet(name="CustomMsg", urlPatterns = {"/custom"})  
-public class Servlet extends HttpServlet {  
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
-  
-    }  
-  
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
-        response.setContentType("text/html");  
-  PrintWriter out = response.getWriter();  
-  out.println("<h3>Hello World!</h3>");  
-  
- if (request.getParameter("username") != null) {  
-            out.println("<p>Boas meu puto " + request.getParameter("username") + "!</p>");  
-  }else {  
-            out.println("<p>Por favor especifica o teu nome no url, para que te possa cumprimentar ;)</p>");  
-  out.println("<p> URL: http://localhost:8080/custom?username=<NOME> </p>");  
-  }  
-  
-    }  
-}
-```
 
 #### i)
 I believe the error to which this exercise is refering to is the one that would happen if I didn't input in the url the tag username=(...) . However, I already dealt with this exception in the previous exercise (see the else)
@@ -149,3 +112,77 @@ There was an unexpected error (type=Not Found, status=404).
 
 No message available
 ```
+
+#### n)
+Follow the tutorial over at https://spring.io/guides/gs/serving-web-content/
+
+Some notes:
+- _The [Spring Boot Maven plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin) provides many convenient features:_
+
+	-   It collects all the jars on the classpath and builds a single, runnable "über-jar", which makes it more convenient to execute and transport your service.
+    
+	-   It searches for the `public static void main()` method to flag as a runnable class.
+    
+	-   It provides a built-in dependency resolver that sets the version number to match [Spring Boot dependencies](https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-dependencies/pom.xml). You can override any version you wish, but it will default to Boot’s chosen set of versions.
+
+- _In Spring’s approach to building web sites, HTTP requests are handled by a controller. You can easily identify these requests by the [`@Controller`](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/stereotype/Controller.html) annotation._
+
+-	_The `@GetMapping` annotation ensures that HTTP GET requests to `/greeting` are mapped to the `greeting()` method._
+-	_[`@RequestParam`](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestParam.html) binds the value of the query String parameter `name` into the `name` parameter of the `greeting()` method. This query String parameter is not `required`; if it is absent in the request, the `defaultValue` of "World" is used. The value of the `name` parameter is added to a [`Model`](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/ui/Model.html) object, ultimately making it accessible to the view template._
+-	_A common feature of developing web apps is coding a change, restarting your app, and refreshing the browser to view the change. This entire process can eat up a lot of time. To speed up the cycle of things, Spring Boot comes with a handy module known as [spring-boot-devtools](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools)._
+
+	-   Enable [hot swapping](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-hotswapping)
+    
+	-   Switches template engines to disable caching
+    
+	-   Enables LiveReload to refresh browser automatically
+    
+	-   Other reasonable defaults based on development instead of production
+
+- _`@SpringBootApplication` is a convenience annotation that adds all of the following:_
+
+	-   `@Configuration`: Tags the class as a source of bean definitions for the application context.
+    
+	-   `@EnableAutoConfiguration`: Tells Spring Boot to start adding beans based on classpath settings, other beans, and various property settings. For example, if `spring-webmvc` is on the classpath, this annotation flags the application as a web application and activates key behaviors, such as setting up a `DispatcherServlet`.
+    
+	-   `@ComponentScan`: Tells Spring to look for other components, configurations, and services in the `hello` package, letting it find the controllers.
+
+-	_If you use Maven, you can run the application by using `$mvn spring-boot:run`. Alternatively, you can build the JAR file with `$mvn clean package` and then run the JAR file, as follows:_
+	
+	-	```java -jar target/gs-serving-web-content-0.1.0.jar```
+
+**Nota:** The way we built the web app using SpringBoot reminded me a lot of **Django**, both in the project's final structure, and the Model-View-Controller (MVC) architecture (i.e, html templates, and a java class that loads specific content into them)
+
+**Changing the default port:** To do this, simply create an **applications.properties** file in the src>main>resources directory. Then add the line `server.port=8090` (or whatever other port you wish to change to)
+More information at https://www.tutorialspoint.com/spring_boot/spring_boot_application_properties.htm
+
+## Questions:
+### Web applications in Java can be deployed to stand-alone applications servers or embedded servers. Elaborate on when to choose one over the other.
+Info for this question was retrieved from https://stackoverflow.com/questions/20736356/embedded-vs-stand-alone-tomcat-http-server (info directly coppied will be in italic)
+
+So firstly we should distinguish Standalone from Embedded servers
+
+**Embedded application servers** prevent us from having to create some upfront setupp with a given app server. These sort of apps have the benefit of being able to be run by the end users without needing any extra installations or configurations of an app server. However
+
+_Applications like Jenkins for example hugely benefit from such packaging. Another scenario is when deploying on cloud services like Heroku. You wrapping the app server within your jar eliminates the need to get the server installed on such cloud boxes._
+
+_Here essentially a single web app runs on a given embedded server. However if you wish to install two web apps on lets say two contexts `${root}/app1` `${root}/app2` then embedded app server is not a good option for you._
+
+In contrast, a **Standalone application server** is a server that runs alone and is not a part of a group.
+
+**DISCLAIMER**: I COULDN'T FIND MUCH INFO TO ANSWER THIS QUESTION WITH ON THE WEB, SO IT'S BEEN LEFT VERY INCOMPLETE. FUTURE-SELF: REMEMBER TO ASK THE TEACHER ABOUT THIS
+
+### Give specific examples of annotations in Spring Boot that implement the principle of convention-over-configuration.
+
+As is said on the official Spring-Boot documentation page (https://docs.spring.io/spring/docs/3.0.0.M3/spring-framework-reference/html/ch16s10.html):
+
+_For a lot of projects, **sticking to established conventions and having reasonable defaults is just what they (the projects) need**... this theme of convention-over-configuration now has explicit support in Spring Web MVC. What this means is that **if you establish a set of naming conventions and suchlike, you can _substantially_ cut down on the amount of configuration that is required to set up handler mappings, view resolvers, `ModelAndView` instances, etc.** This is a great boon with regards to rapid prototyping, and can also lend a degree of (always good-to-have) consistency across a codebase should you choose to move forward with it into production._
+_This convention over configuration support address the three core areas of MVC - namely, the models, views, and controllers._
+
+Knowing this, some Spring Boot annotations that implement this principle include, but are not limited to:
+-   @Configuration - indicates that a class is a configuration class that may contain bean definitions.
+-   @Controller - marks the class as web controller, capable of handling the requests.
+-   @Autowired - marks a constructor, field, or setter method to be autowired by Spring dependency injection.
+-   @SpringBootApplication - enables Spring Boot autoconfiguration and component scanning.
+
+More info on annotations and project structure can be found here: http://zetcode.com/springboot/annotations/
