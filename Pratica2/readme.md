@@ -156,6 +156,13 @@ Some notes:
 **Changing the default port:** To do this, simply create an **applications.properties** file in the src>main>resources directory. Then add the line `server.port=8090` (or whatever other port you wish to change to)
 More information at https://www.tutorialspoint.com/spring_boot/spring_boot_application_properties.htm
 
+
+#### o)
+Follow the tutorial https://spring.io/guides/gs/rest-service/ !
+To view the json returned by our newly created rest-api we can either visit the url as usual (which we shouldn't do since we're now working with a rest-api that's supposed to handle requests and give responses in the backend and not in an html frontend kind of way), or with the app **Postman**
+
+![enter image description here](https://i.imgur.com/d0czaAE.png)Note how we tagged our request as a GET Request, and how, from the last exercise, we changed the end port from the default 8080 to our custom 8090
+
 ## Questions:
 ### Web applications in Java can be deployed to stand-alone applications servers or embedded servers. Elaborate on when to choose one over the other.
 Info for this question was retrieved from https://stackoverflow.com/questions/20736356/embedded-vs-stand-alone-tomcat-http-server (info directly coppied will be in italic)
