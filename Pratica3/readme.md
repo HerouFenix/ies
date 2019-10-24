@@ -20,7 +20,7 @@
 			-	[Describe the role of the elements modeled in the previous point]()
 			-	[Be sure to provide evidence (e.g.: screenshots, JSON results view) that you have successfully used the API to insert new entries]()
 			-	[Why is that the Employee entity does not have getters and setters defined? (tip: Lombok)](why-is-that-the-employee-entity-does-not-have-getters-and-setters-defined?-(tip:-lombok))
-	-	[3.2](#3-1)
+	-	[3.2](#3-2)
 		-	[d)](#d)
 		-	[e)](#e)
 		-	[f)](#f)
@@ -33,6 +33,7 @@
 			-	[Explain the annotations @Table, @Column, @Id found in the Employee entity](#explain-the-annotations-table-column-id-found-in-the-employee-entity)
 			-	[Explain the use of the annotation @AutoWired](#explain-the-use-of-the-annotation-autowired)
 
+	-	[3.3](#3-3)
 ## Exercises
 ## 3.1
 ### a)
@@ -487,3 +488,433 @@ In our project we use the @AutoWired annotation on our **EmployeController** to 
 private EmployeeRepository employeeRepository;
 ```
 So basically what we're doing is using the @AutoWIred annotation on a property, hence eliminating the need to manually use getters and setters. SpringBoot will look for and inject _employeeRepository_ during the creation of our EmployeeController doing all of that nasty work for us.
+
+
+## 3.3
+### k)
+Following the tutorial present in https://www.vogella.com/tutorials/SpringBoot/article.html I built the following Spring project using our SpringBoot Initializr online wizard like so:
+
+![enter image description here](https://i.imgur.com/dPzbcqR.png)
+Besides this we also need to add the following dependencies to our _pom.xml_:
+```
+<dependency>  
+	<groupId>org.springframework.boot</groupId> 
+	 <artifactId>spring-boot-starter-thymeleaf</artifactId>  
+	</dependency>  
+<dependency>  
+	<groupId>org.springframework.boot</groupId> 
+	 <artifactId>spring-boot-starter-data-jpa</artifactId>  
+</dependency>  
+
+<dependency>  
+	<groupId>org.springframework.boot</groupId> 
+	 <artifactId>spring-boot-devtools</artifactId>  
+</dependency>
+```
+
+### l)
+In our Controllers package we're gonna create a Controller Entity, named IssueController:
+```
+package com.issuereport.example.demo.Controllers;  
+  
+import org.springframework.stereotype.Controller;  
+import org.springframework.web.bind.annotation.GetMapping;  
+import org.springframework.web.bind.annotation.PostMapping;  
+import org.springframework.web.bind.annotation.ResponseBody;  
+  
+@Controller  
+public class IssueController {  
+    @GetMapping("/issuereport") //  
+  
+  @ResponseBody  
+  public String getReport() { //  
+  
+  return "issues/issuereport_form";  
+  }  
+  
+    @PostMapping("/issuereport") //  
+  
+  @ResponseBody  
+  public String submitReport() { //  
+  
+  return "issues/issuereport_form";  
+  }  
+  
+    @GetMapping("/issues")  
+    @ResponseBody  
+  public String getIssues() {  //  
+  
+  return "issues/issuereport_list";  
+  }  
+}
+```
+As stated in the tutorial page:
+> This class contains the methods responsible for handling incoming web requests.
+> 
+>- The class is annotated with the `@Controller` annotation to tell the Spring framework that it is a controller.
+>-	 The `@GetMapping` annotation above the method signals the Spring Core that this method should only handle `GET` requests.
+> -	The `getReport()` method later will return the base form template in which the user can submit the issue they found. Right now it only returns a string, the functionality will be added later.
+>-	The `@PostMapping` annotation signals that this method should only handle `POST` requests and thus only gets called when a `POST` request is received.
+> -	The `submitReport()` method is responsible for handling the user input after submitting the form. When the data is received and handled (e.g. added to the database), this method returns the same `issuereport` template from the first controller method. 
+> -	The `getIssues()` method will handle the HTML template for a list view in which all the requests can be viewed. This method will return a template with a list of all reports that were submitted. The `@ResponseBody` annotation will be removed in a later step. For now we need to output just the text to the HTML page. If we would remove it now the framework would search for a template with the given name and since there is none would throw an error.
+
+
+### m)
+Our IssueReport entity should look like this:
+```
+package com.issuereport.example.demo.entities;  
+  
+import java.sql.Date;  
+import javax.persistence.Entity;  
+import javax.persistence.GeneratedValue;  
+import javax.persistence.GenerationType;  
+import javax.persistence.Id;  
+import javax.persistence.Table;  
+  
+@Entity// #1  
+@Table(name = "issues")// #2  
+public class IssueReport {  
+    @Id  
+ @GeneratedValue(strategy = GenerationType.AUTO)  
+    private long id;  
+ private String email;  
+ private String url;  
+ private String description;  
+ private boolean markedAsPrivate;  
+ private boolean updates;  
+ private boolean done;  
+ private Date created;  
+ private Date updated;  
+  
+ public IssueReport() {}  
+  
+    public long getId() {  
+        return id;  
+  }  
+  
+    public void setId(long id) {  
+        this.id = id;  
+  }  
+  
+    public String getEmail() {  
+        return email;  
+  }  
+  
+    public void setEmail(String email) {  
+        this.email = email;  
+  }  
+  
+    public String getUrl() {  
+        return url;  
+  }  
+  
+    public void setUrl(String url) {  
+        this.url = url;  
+  }  
+  
+    public String getDescription() {  
+        return description;  
+  }  
+  
+    public void setDescription(String description) {  
+        this.description = description;  
+  }  
+  
+    public boolean isMarkedAsPrivate() {  
+        return markedAsPrivate;  
+  }  
+  
+    public void setMarkedAsPrivate(boolean markedAsPrivate) {  
+        this.markedAsPrivate = markedAsPrivate;  
+  }  
+  
+    public boolean isUpdates() {  
+        return updates;  
+  }  
+  
+    public void setUpdates(boolean updates) {  
+        this.updates = updates;  
+  }  
+  
+    public boolean isDone() {  
+        return done;  
+  }  
+  
+    public void setDone(boolean done) {  
+        this.done = done;  
+  }  
+  
+    public Date getCreated() {  
+        return created;  
+  }  
+  
+    public void setCreated(Date created) {  
+        this.created = created;  
+  }  
+  
+    public Date getUpdated() {  
+        return updated;  
+  }  
+  
+    public void setUpdated(Date updated) {  
+        this.updated = updated;  
+  }  
+}
+```
+
+> The `@Entity` annotation tells our JPA provider Hibernate that this class should be mapped to the database.
+> Set the database table name with the `@Table(name="issues")` annotation. By explicitly setting the table name you avoid the possibility of accidently breaking the database mapping by renaming the class later on.
+
+### n)
+First we need to update our IssueController:
+```
+package com.issuereport.example.demo.controllers;  
+  
+import org.springframework.stereotype.Controller;  
+import org.springframework.web.bind.annotation.GetMapping;  
+import org.springframework.web.bind.annotation.PostMapping;  
+import org.springframework.ui.Model;  
+@Controller  
+public class IssueController {  
+    @GetMapping("/issuereport") //  
+  public String getReport(Model model) { //  
+  
+  return "issues/issuereport_form";  
+  }  
+  
+    @PostMapping("/issuereport") //  
+  public String submitReport() { //  
+  
+  return "issues/issuereport_form";  
+  }  
+  
+    @GetMapping("/issues")  
+    public String getIssues() {  //  
+  
+  return "issues/issuereport_list";  
+  }  
+}
+```
+> Currently all our controller methods use the `@ResponseBody` annotation. With this annotation in place the String returned by our controller methods gets sent to the browser as plain text. If we remove it, the Thymeleaf library will look for an HTML Template with the name returned.
+> Each route will then return the name of the template it should serve.
+> -	getReport()
+	> 	-	`issues/issuereport_form`
+> -	submitReport()
+	> 	-	`issues/issuereport_form`
+> -	getIssues()
+	> 	-	`issues/issurereport_list`
+>	
+> Since we want to pass data into the template we also need to add a `Model` to the method parameters. Add `Model model` to the controller methods parameters. These will be automatically injected when the endpoint is called. Since this is fully done by the Spring framework we don’t have to worry about this. In the next step we’ll add attributes to the `Model` object to make them available in the template.
+> 
+>Now the Framework will look for the templates with the given name and serve them to the browser.
+
+This isn't enough however, now we've got to change our controller further to bind objects to the templates like so:
+
+```
+package com.issuereport.example.demo.controllers;  
+  
+import com.issuereport.example.demo.entities.IssueReport;  
+import org.springframework.stereotype.Controller;  
+import org.springframework.web.bind.annotation.GetMapping;  
+import org.springframework.web.bind.annotation.PostMapping;  
+import org.springframework.ui.Model;  
+  
+@Controller  
+public class IssueController {  
+    @GetMapping("/issuereport") //  
+  public String getReport(Model model) { //  
+  model.addAttribute("issuereport", new IssueReport());  
+ return "issues/issuereport_form";  
+  }  
+  
+    @PostMapping(value="/issuereport")  
+    public String submitReport(IssueReport issueReport, Model model) {  
+        model.addAttribute("issuereport", new IssueReport());  
+  model.addAttribute("submitted", true);  
+ return "issues/issuereport_form";  
+  }  
+      
+    @GetMapping("/issues")  
+    public String getIssues(Model model) {  
+        return "issues/issuereport_list";  
+  }  
+}
+```
+
+> Spring provides a `Model` object which can be passed into the controller. You can configure this model object via the `addAttribute()` method. The first parameter in this method is the key under which the second parameter can be accessed. You will use this name to refer to this object in the template.
+> 
+> This will pass a new `IssueReport` object to the template
+> 
+> This will deliver the data submitted via the form to this method. In the `submitReport()` method we also want to handle the data submitted via the form.
+> 
+> This will pass a new `IssueReport` object to the template. To do this we also need to add `IssueReport issueReport` to the method
+> parameters.
+> 
+> Since we want the template to show some kind of feedback upon receiving the form data, we add another attribute containing a boolean. If it’s set to `true` the template will show some kind of modal or confirming message. Since this boolean is only passed to the template if the route hit from the user was via `POST` HTTP method (and thus only upon form submission) the confirmation message is ONLY shown after the form was submitted.
+
+
+Finally we've got to create, under resources > templates > issues, two new HTML pages:
+**issuereport_form.html**
+```
+<!DOCTYPE html>  
+<html xmlns:th="http://www.thymeleaf.org">  
+<head>  
+ <title>DS' IssueReport</title>  
+ <link rel="stylesheet" href="./style.css" />  
+ <meta charset="UTF-8" />  
+</head>  
+<body>  
+<div class="container">  
+ <form method="post" action="#" th:object="${issuereport}" th:action="@{/issuereport}">  
+ <h3>DS' IssueReport</h3>  
+ <input type="text" placeholder="Email" id="email" th:field="*{email}"/>  
+ <input type="text" placeholder="Url where the issue was found on" id="url" th:field="*{url}" />  
+ <textarea placeholder="Description of the issue" rows="5" id="description" th:field="*{description}" ></textarea>  
+  
+ <label for="private_id">  
+  Private?  
+            <input type="checkbox" name="private" id="private_id" th:field="*{markedAsPrivate}" />  
+ </label>  
+ <label for="updates_id">  
+  Keep me posted  
+            <input type="checkbox" id="updates_id" name="updates" th:field="*{updates}" />  
+ </label>  
+ <input type="submit" value="Submit"/>  
+ </form>  
+  
+ <div class="result_message" th:if="${submitted}">  
+ <h3>Your report has been submitted.</h3>  
+ <p>Find all issues <a href="/issues">here</a></p>  
+ </div></div>  
+</body>  
+</html>
+```
+**issuereport_list.html**
+```
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vogella Issuereport</title>
+    <link rel="stylesheet" href="./style.css" />
+    <meta charset="UTF-8" />
+</head>
+<body>
+    <div class="container issue_list">
+        <h2>Issues</h2>
+        <br />
+        <table>
+            <tr>
+                <th>Url</th>
+                <th class="desc">Description</th>
+                <th>Done</th>
+                <th>Created</th>
+            </tr>
+            <th:block th:each="issue : ${issues}">
+                <tr>
+                    <td ><a th:href="@{${issue.url}}" th:text="${issue.url}"></a></td>
+                    <td th:text="${issue.description}">...</td>
+                    <td><span class="status" th:classappend="${issue.done} ? done : pending"></span></td>
+                    <td th:text="${issue.created}">...</td>
+                </tr>
+            </th:block>
+        </table>
+    </div>
+</body>
+</html>
+```
+
+To check out what each of the **th** (thymeleaf) tags do, go to the tutorial's page.
+
+We can also add some custom css by including in the < head > tags of both html's `<link rel="stylesheet" href="./style.css" />` and creating the following file under resources > static 
+
+### o)
+Start off by creating the following IssueRepository interface under src > main > java > demo > repositories
+```
+package com.issuereport.example.demo.repositories;  
+
+import com.issuereport.example.demo.entities.IssueReport;  
+import org.springframework.data.jpa.repository.JpaRepository;  
+  
+  
+public interface IssueRepository extends JpaRepository<IssueReport, Long>{  
+    @Query(value = "SELECT i FROM IssueReport i WHERE markedAsPrivate = false")  
+    List<IssueReport> findAllButPrivate(); 
+    List<IssueReport> findAllByEmail(String email);
+}
+```
+
+Note that we want to fetch all entries which are not marked private and show them on the public list view. That's why we have that custom `@Query` method.
+
+We also want to get all IssueReport reported by the same email-address. This is also done with a custom method. But for this we don’t need a custom `@Query`. It’s enough to create a method named `findAllByXXX`. `XXX` is a placeholder for the column you want to select by from the database. The value for this is passed in as a method parameter.
+
+So now we gotta add our repository to our controller by adding the following lines to our IssueController:
+```
+IssueRepository issueRepository;  
+  
+public IssueController(IssueRepository issueRespository) {  
+    this.issueRepository = issueRepository;  
+}
+```
+
+In order to save our issues to our repository we've also gotta change the following function to look like so:
+```
+@PostMapping(value="/issuereport")  
+public String submitReport(IssueReport issueReport, RedirectAttributes ra) {  
+	this.issueRepository.save(issueReport);  
+	ra.addAttribute("submitted", true);  
+	return "redirect:/issuereport";  
+}
+```
+
+Next we gotta change these two next methods to get the issues from our repository:
+```
+@GetMapping("/issuereport")  
+public String getReport(Model model, @RequestParam(name = "submitted", required = false) boolean submitted) { model.addAttribute("submitted", submitted);  
+	model.addAttribute("issuereport", new IssueReport());  
+	return "issues/issuereport_form";  
+}
+
+@GetMapping("/issues")  
+public String getIssueReport(Model model) {  
+	model.addAttribute("issues", this.issueRepository.findAllButPrivate());  
+	return "issues/issuereport_list";  
+}
+```
+
+### What it should look like:
+![enter image description here](https://i.imgur.com/wm4F20T.png)
+
+![enter image description here](https://i.imgur.com/N0irVYy.png)
+
+### p)
+Running the command:
+`sudo docker run --name mysql5 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=issue-report -e MYSQL_USER=demo -e MYSQL_PASSWORD=password -p 3306:3306 -d mysql/mysql-server:5.7`
+
+Adding the following dependency to our pom.xml:
+```
+<dependency>
+	<groupId>mysql</groupId>
+	<artifactId>mysql-connector-java</artifactId>
+	<scope>runtime</scope>
+</dependency>
+```
+
+And adding the following to src > main > resources > application.properties:
+```
+## MySQL  
+spring.datasource.url=jdbc:mysql://localhost:3306/issue-report  
+spring.datasource.username=demo  
+spring.datasource.password=password  
+  
+#`hibernate_sequence' doesn't exist  
+spring.jpa.hibernate.use-new-id-generator-mappings=false  
+  
+# drop n create table, good for testing, comment this in production  
+spring.jpa.hibernate.ddl-auto=create
+```
+
+We've effectively changed our app to run using our MySQL server running from a docker :)
+
+### q)
+Checking out the following tutorial:
+https://www.callicoder.com/spring-boot-mysql-react-docker-compose-example/
