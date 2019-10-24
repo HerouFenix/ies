@@ -1,4 +1,39 @@
-﻿# IES Lab03
+﻿FROM openjdk:8-jdk-alpine as build
+
+# Set the current working directory inside the image
+WORKDIR /app
+
+# Copy maven executable to the image
+COPY mvnw .
+COPY .mvn .mvn
+
+# Copy the pom.xml file
+COPY pom.xml .
+
+# Build all the dependencies in preparation to go offline. 
+# This is a separate step so the dependencies will be cached unless 
+# the pom.xml file has changed.
+RUN ./mvnw dependency:go-offline -B
+
+# Copy the project source
+COPY src src
+
+# Package the application
+RUN ./mvnw package -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
+#### Stage 2: A minimal docker image with command to run the app 
+FROM openjdk:8-jre-alpine
+
+ARG DEPENDENCY=/app/target/dependency
+
+# Copy project dependencies from the build stage
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+
+ENTRYPOINT ["java","-cp","app:app/lib/*","com.issuereport.example.demo.DemoApplication"]
+# IES Lab03
 
 ## Index
 -	[Exercises](#Exercises)
@@ -34,6 +69,14 @@
 			-	[Explain the use of the annotation @AutoWired](#explain-the-use-of-the-annotation-autowired)
 
 	-	[3.3](#3-3)
+		-	[k)](#k)
+		-	[l)](#l)
+		-	[m)](#m)
+		-	[n)](#n)
+		-	[o)](#o)
+		- [What it should look like](#what-it-should-look-like)
+		-	[p)](#p)
+		-	[q)](#q)
 ## Exercises
 ## 3.1
 ### a)
@@ -918,3 +961,95 @@ We've effectively changed our app to run using our MySQL server running from a d
 ### q)
 Checking out the following tutorial:
 https://www.callicoder.com/spring-boot-mysql-react-docker-compose-example/
+
+Springboot's Dockerfile (placed in the project's root folder):
+```
+FROM openjdk:8-jdk-alpine as build
+
+# Set the current working directory inside the image
+WORKDIR /app
+
+# Copy maven executable to the image
+COPY mvnw .
+COPY .mvn .mvn
+
+# Copy the pom.xml file
+COPY pom.xml .
+
+# Build all the dependencies in preparation to go offline. 
+# This is a separate step so the dependencies will be cached unless 
+# the pom.xml file has changed.
+RUN ./mvnw dependency:go-offline -B
+
+# Copy the project source
+COPY src src
+
+# Package the application
+RUN ./mvnw package -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
+#### Stage 2: A minimal docker image with command to run the app 
+FROM openjdk:8-jre-alpine
+
+ARG DEPENDENCY=/app/target/dependency
+
+# Copy project dependencies from the build stage
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+
+ENTRYPOINT ["java","-cp","app:app/lib/*","com.issuereport.example.demo.DemoApplication"]
+
+```
+
+Docker Compose file (project's parent folder):
+```
+# Docker Compose file
+version: '3.3' 
+
+# Define services
+services:
+  # App backend service
+  app-server:
+    # Configuration for building the docker image for the backend service
+    build:
+      context: issue_report # Use an image built from the specified dockerfile in the `polling-app-server` directory.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    restart: always
+    depends_on:
+      - db # This service depends on mysql. Start that first.
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/polls?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: callicoder
+      SPRING_DATASOURCE_PASSWORD: callicoder
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - backend
+      - frontend
+
+# Database Service (Mysql)
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: issue-report
+      MYSQL_USER: demo
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend
+
+# Volumes
+volumes:
+  db-data:
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:
+  frontend:
+
+```
